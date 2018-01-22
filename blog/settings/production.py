@@ -124,7 +124,7 @@ if not settings.DEBUG:
 
     LANGUAGE_CODE = 'en-us'
 
-    TIME_ZONE = 'Asia/Kolkata' #'UTC'
+    TIME_ZONE = 'UTC' #'Asia/Kolkata'
 
     USE_I18N = True
 
