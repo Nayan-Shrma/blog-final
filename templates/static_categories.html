@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h1>Categories to choose from ..</h1>
+<br/>
+<div class="row">
+  <div class="col-sm-4 offset-sm-2">
+    <div class="card">
+      <div class="card-block" style="padding: 8px;">
+        <h3 class="card-title" >Special title treatment</h3>
+        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-block" style="padding: 8px;">
+        <h3 class="card-title">Special title treatment</h3>
+        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ models.Post.count }}
+
+
+{% endblock %}

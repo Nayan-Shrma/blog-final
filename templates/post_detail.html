@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}
+{{ instance.title  }} | {{ block.super }}
+{% endblock head_title %}
+
+{% block post_detail_link %}             
+<a href="{{ instance.get_absolute_url }}" style="font-family: 'Pacifico', cursive;">
+                        {{ instance.title }}
+</a>
+{% endblock post_detail_link %}
+
+
+{% block content %}
+
+<div class = "col-sm-6 offset-sm-3">
+	{% if instance.image %}
+	<img src="{{ instance.image.url }}" class = "img-fluid"/>
+	{% endif %}
+	
+	<br/>
+
+	<h1>{{title}}<small class = "small-time">{% if instance.draft %} <span style="color: red;">Draft</span> {% endif %} {{instance.publish}}</small></h1>
+
+	<p> Read time : <!-- {% if instance.read_time < 01 %} < 1 minute {% else %}  -->{{ instance.read_time }} minutes<!-- {% endif %} --><!-- {% if instance.read_time|time:"i" <= "01" %} < 1 minute {% else %} {{ instance.read_time|time:"i" }} minutes {% endif %} --> (approx.)</p>
+
+	{% if instance.user.get_full_name %}
+	<p>Author : {{ instance.user.get_full_name }}</p>
+	{% endif %}
+<!-- {{ instance.content|truncatechars:20|urlify }}<br/>
+{{ share_string }} -->
+<!-- {{request.build_absolute_uri}} -->
+<p>
+	<div class="fb-like" data-href={{request.build_absolute_uri}} data-layout="button_count" data-action="like" data-size="large" data-show-faces="false" data-share="true"></div>
+	</p>
+
+<hr/>
+<!-- 	<p>
+		<a href="https://www.facebook.com/sharer/sharer.php?u={{request.build_absolute_uri}}">
+		Facebook
+		</a>
+
+		<a href="https://twitter.com/home?status={{ instance.content|truncatechars:80|urlify }}%20{{request.build_absolute_uri}}">
+		Twitter
+		</a>
+
+		<a href='https://plus.google.com/share?url=http://codingforentrepreneurs.com'></a>
+
+		<a href="https://www.linkedin.com/shareArticle?mini=true&url=http://swiftforentrepreneurs.com/&title={{ instance.title }}&summary={{ share_string }}&source={{request.build_absolute_uri}}">
+		Linkedin
+		</a>
+
+		<a href="http://www.reddit.com/submit?url={{request.build_absolute_uri}}/&title={{ share_string }}">Reddit</a>
+	</p>
+ -->	
+ <div class="row">
+ <div class = "col-sm-12">
+ <div class = "post-detail-item">{{instance.get_markdown}}</div>	
+ 			<!-- {{instance.comments.all}} -->
+			<hr/>
+			<div>
+			<p class = "lead"><b>Comments : </b></p>
+			<!-- area where new comments are made -->
+			{% if request.user.is_authenticated %}
+			<form method = "POST" action = ".">{% csrf_token %}
+				{{ comment_form|crispy }}
+				<input type = "submit" value = "Post Comment">
+			</form>
+			{% else %}
+				<p> You must <a href="{% url 'login' %}">Login</a> to comment </p>
+			{% endif %}	
+
+				<div class="collapse" id="collapseExample">
+				<div class="card card-body">
+				You Must be Logged in before you can comment ..
+				Please <a>Login</a> Here if you wish to proceed   :)
+				</div>
+				</div>
+				
+				{% for comment in comments %}
+
+				<blockquote class="blockquote blockquote-reverse">
+					<p class="mb-0">{{comment.content}}</p>
+					<footer class="blockquote-footer"><cite title="Source Title"> via {{comment.user}} </cite>| {{comment.timestamp|timesince}} ago | {% if comment.children.count %}{{comment.children.count}} comment{% if comment.children.count > 1 %}s{% endif %}{% endif %}{% if request.user.is_authenticated %}<a href = "#" class = "comment-reply-btn"> Reply</a>{% else %}<a href = "#collapseExample" data-toggle="collapse" class = "comment-reply-btn"> Reply</a>{% endif %}<a href='{{ comment.get_absolute_url }}' class = ""> Thread</a></footer>
+				
+<!-- data-toggle="collapse"
+href="#collapseExample"
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+  </div>
+</div> -->
+
+
+						<div class = "comment-reply">
+							{% for child_comment in comment.children %}
+
+							<blockquote class="blockquote text-right">
+							<p class="mb-0">{{child_comment.content}}</p>
+							<footer class="blockquote-footer"><cite title="Source Title"> via {{child_comment.user}} </cite> | {{child_comment.timestamp|timesince}} ago )</footer>
+							</blockquote>
+
+
+							{%  endfor %}
+
+							<!-- child comment form -->
+						{% if request.user.is_authenticated %}
+								<form method = "POST" action = ".">{% csrf_token %}
+									{{ comment_form|crispy }}
+									<input type = "hidden" name = "parent_id" value = "{{ comment.id }}">
+									<input type = "submit" value = "Reply">
+								</form>
+						{% else %}
+							<p> You must Login to comment </p>
+						{% endif %}	
+						</div>
+						<hr/>
+				</blockquote>
+					
+				
+				{% endfor %}
+				
+				<!-- {{ instance.comment_set.all }} -->
+				
+			<!-- <div class="fb-comments" data-href={{request.build_absolute_uri}} data-numposts="5"></div> -->
+
+</div>
+</div>
+</div>
+
+
+{% endblock %}

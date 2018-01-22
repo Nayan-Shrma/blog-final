@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+	
+
+	
+	<div class = "col-sm-6 offset-sm-3" >
+	
+		<!-- <h1>{{ title }}</h1> -->
+
+	<!-- <form method= "GET" action="" class = "row">
+			<div class = "col-sm-6">	
+				<div class = "input-group mb-3">
+					
+					<input class = "form-control" type = "text" name = "q" placeholder="Search Posts" value="{{ request.GET.q }}" />
+					 
+					<span class = "input-group-btn">
+						<input class = "btn btn-default" type = "submit" value="Search"/>
+
+					<button class = "btn btn-default btn-outline-success" type = "button"><i class="fa fa-search" aria-hidden="true"></i>!</button>
+					</span>
+					
+				</div>
+			</div>
+	</form> --> 
+
+	{% for obj in object_list %}
+	<div style="margin-bottom:50px">
+				<div class="card text-center">
+				  <div class="card-header">
+				   <a href = "{{ obj.get_absolute_url }}"> <h3 style="font-family: 'Bubblegum Sans', cursive;">{{obj.title}} </h3> </a> 
+					
+				   <h6>{{obj.publish}}</h6>
+				   {% if obj.draft %}<h5>Staff-Only : Draft{% endif %}{% if obj.publish > today %} Future-Post{% endif %}</h5>
+				  </div>
+				  <div class="card-body post-detail-item">
+				  {% if obj.image %}
+				  <img src="{{ obj.image.url }}" class = "img-fluid"/>
+				  {% endif %}
+				    <!-- <h5 class="card-title"><small>{{obj.timestamp}}</small></h5> -->
+				    <p class="card-text">{{obj.get_markdown|truncatechars_html:100}}</p>
+				    <a href="{{ obj.get_absolute_url }}" class="btn btn-primary">View >></a>
+				    <br/> <br/>
+				    {% if obj.user.get_full_name %}
+					<p>Author : {{ obj.user.get_full_name }}</p>
+					{% endif %}
+				  </div>
+				  <div class="card-footer text-muted">
+				   Updated : {{obj.updated|timesince}} ago <!-- {{obj.timestamp|timesince}} ago -->
+				  </div>
+				</div>
+
+	<hr/>
+	</div>
+	{% endfor %}
+
+	<div class="pagination">
+    <span class="step-links">
+        {% if object_list.has_previous %}
+            <a href="?{{page_request_var}}={{ object_list.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+        </span>
+
+        {% if object_list.has_next %}
+            <a href="?{{page_request_var}}={{ object_list.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock content %}
